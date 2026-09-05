@@ -2,6 +2,7 @@
   "id": "supermercado",
   "name": "Supermercado GTA7 Central",
   "description": "Supermercado da cidade GTA7 Lab: alimentos, bebidas, limpeza e bazar, com padaria, acougue e peixaria. Consulta de produtos, estoque e informacoes da loja.",
+  "repo": "https://github.com/GTA7-Lab/supermercado",
   "capabilities": [
     "consultar_produtos",
     "consultar_estoque",
