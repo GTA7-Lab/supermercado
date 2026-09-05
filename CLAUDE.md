@@ -61,8 +61,8 @@ v0.1 **no ar e integrada**.
 - **Repo próprio:** `github.com/GTA7-Lab/supermercado` (código na raiz). O Core da cidade
   fica em `github.com/GTA7-Lab/gta7-lab` (checkout local em `../gta7-lab-monorepo`).
 - **Vercel:** projeto `gta7-lab-supermercado`, produção pública (SSO desligado):
-  `https://gta7-lab-supermercado-b-on-d.vercel.app`. Deploy via MCP da Vercel.
-  Se git-linkar: importar `GTA7-Lab/supermercado`, Root Directory na raiz.
+  `https://gta7-lab-supermercado-b-on-d.vercel.app`. **Git-linkado a `GTA7-Lab/supermercado`
+  (branch `main`, Root Directory na raiz) — push = auto-deploy** (confirmado).
 - **Core:** registrada no repo `GTA7-Lab/gta7-lab` em `core/data/entities.json`
   (`transport: http`, tag `grocery`, endpoint acima); tag `grocery` em `core/src/lexicon.ts`.
   `cd ../gta7-lab-monorepo/core && npm run build && npm run smoke` passa com as 3 entidades.
@@ -71,7 +71,6 @@ v0.1 **no ar e integrada**.
 
 ## Próxima tarefa
 
-- (Opcional) ligar `GTA7-Lab/supermercado` ao projeto Vercel para auto-deploy on push.
-- Se o endpoint de produção mudar, atualizar `core/data/entities.json` no repo do Core.
-- (Opcional) remover a pasta `entities/supermercado/` do monorepo `gta7-lab`, já que a
-  entidade agora tem repo próprio (feito via PR no repo do Core).
+- Push na `main` de `GTA7-Lab/supermercado` já publica sozinho na Vercel.
+- Se o domínio de produção mudar, atualizar o `endpoint` em `core/data/entities.json` (repo do Core).
+- (Opcional) remover a pasta `entities/supermercado/` do monorepo `gta7-lab` via PR.
