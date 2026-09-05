@@ -1,0 +1,33 @@
+{
+  "id": "supermercado",
+  "name": "Supermercado GTA7 Central",
+  "description": "Supermercado da cidade GTA7 Lab: alimentos, bebidas, limpeza e bazar, com padaria, acougue e peixaria. Consulta de produtos, estoque e informacoes da loja.",
+  "capabilities": [
+    "consultar_produtos",
+    "consultar_estoque",
+    "consultar_loja",
+    "consultar_espacos_servico"
+  ],
+  "mcp": {
+    "transport": "streamable-http",
+    "endpoint": "/api/mcp",
+    "tools": [
+      {
+        "name": "search_products",
+        "description": "Busca produtos por texto, departamento, preco maximo e disponibilidade em estoque."
+      },
+      {
+        "name": "check_stock",
+        "description": "Consulta estoque, preco e corredor de um produto pelo id, nome ou codigo de barras."
+      },
+      {
+        "name": "get_store_info",
+        "description": "Retorna dados da loja (endereco, horario, caixas, carrinhos) e espacos de servico disponiveis."
+      }
+    ]
+  },
+  "http": {
+    "products": "GET /api/products?query=&department=&max_price=&in_stock_only=",
+    "manifest": "GET /api/manifest"
+  }
+}
