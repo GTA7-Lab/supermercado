@@ -44,7 +44,9 @@ export interface NewCustomer {
   points?: number;
 }
 
-export function createCustomer(input: NewCustomer): { customer: Customer; persist: SaveResult } {
+export async function createCustomer(
+  input: NewCustomer,
+): Promise<{ customer: Customer; persist: SaveResult }> {
   const id = nextCustomerId();
   const customer: Customer = {
     id,
@@ -54,7 +56,7 @@ export function createCustomer(input: NewCustomer): { customer: Customer; persis
     points: Math.max(0, Math.round(input.points ?? 0)),
   };
   all().push(customer);
-  return { customer: { ...customer }, persist: save() };
+  return { customer: { ...customer }, persist: await save() };
 }
 
 export interface CustomerPatch {
@@ -63,24 +65,26 @@ export interface CustomerPatch {
   points?: number;
 }
 
-export function updateCustomer(
+export async function updateCustomer(
   idOrName: string,
   patch: CustomerPatch,
-): { customer?: Customer; persist?: SaveResult } {
+): Promise<{ customer?: Customer; persist?: SaveResult }> {
   const i = indexOfCustomer(idOrName);
   if (i === -1) return {};
   const c = all()[i];
   if (patch.name !== undefined && patch.name.trim()) c.name = patch.name.trim();
   if (patch.loyalty_id !== undefined && patch.loyalty_id.trim()) c.loyalty_id = patch.loyalty_id.trim();
   if (patch.points !== undefined) c.points = Math.max(0, Math.round(patch.points));
-  return { customer: { ...c }, persist: save() };
+  return { customer: { ...c }, persist: await save() };
 }
 
-export function deleteCustomer(idOrName: string): { customer?: Customer; persist?: SaveResult } {
+export async function deleteCustomer(
+  idOrName: string,
+): Promise<{ customer?: Customer; persist?: SaveResult }> {
   const i = indexOfCustomer(idOrName);
   if (i === -1) return {};
   const [removed] = all().splice(i, 1);
-  return { customer: removed, persist: save() };
+  return { customer: removed, persist: await save() };
 }
 
 /** Soma pontos de fidelidade (delta pode ser negativo). NAO persiste sozinho. */

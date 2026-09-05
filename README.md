@@ -51,18 +51,34 @@ npx @modelcontextprotocol/inspector
 # conecte em http://localhost:3000/api/mcp (transport: Streamable HTTP)
 ```
 
-## Dados — `data/supermarket.json`
+## Dados e persistência — `data/supermarket.json`
 
-- `store` — dados da loja e estrutura (estacionamento, banheiros, caixas, carrinhos) + `service_spaces`
-- `products` — catálogo com preço, estoque, corredor, departamento
-- `customers` — base de clientes / fidelidade
-- `purchases` — histórico de compras
+Esse arquivo é o datastore. `store`, `products`, `customers`, `purchases`.
+Toda escrita (cadastro de produto/serviço/cliente e `register_purchase`) grava de volta nele:
+
+- **Local** (`npm run dev`/`start`): grava no arquivo — persiste e aparece na página `/`.
+- **Vercel** (disco somente leitura): se houver `GITHUB_TOKEN`, faz um **commit do arquivo
+  no repositório**; o deploy automático republica com os dados novos em ~1 min.
+  Sem token, a alteração vale só durante a sessão da instância.
+
+⚠️ Na Vercel, cada escrita vira um commit + rebuild (~1 min) — inclusive cada compra.
 
 ## Deploy na Vercel
 
-Projeto Next.js padrão — importar `GTA7-Lab/supermercado` na Vercel (Root Directory na raiz,
-sem variáveis de ambiente). Projeto Vercel atual: `gta7-lab-supermercado`.
+Importar `GTA7-Lab/supermercado` (Root Directory na raiz). Projeto atual: `gta7-lab-supermercado`.
 O MCP fica em `https://<domínio>/api/mcp`.
+
+### Variáveis de ambiente (para persistência na Vercel)
+
+| Var | Para quê |
+|-----|----------|
+| `GITHUB_TOKEN` | PAT fine-grained no repo `GTA7-Lab/supermercado` com **Contents: Read and write**. Sem ela, escritas não persistem em produção. |
+| `GTA7_MAGIC_WORD` | Sobrescreve a palavra mágica das escritas de admin (padrão no código: `ericgomes`). |
+| `GITHUB_REPO` / `GITHUB_BRANCH` / `GITHUB_DATA_PATH` | Opcionais. Padrões: `GTA7-Lab/supermercado` / `main` / `data/supermarket.json`. |
+| `FORCE_GITHUB_PERSIST=1` | Opcional. Força o commit no GitHub mesmo com disco gravável (teste). |
+
+Criar o token em GitHub → Settings → Developer settings → Fine-grained tokens →
+resource owner `GTA7-Lab`, repo `supermercado`, permissão **Contents: Read and write**.
 
 ## Registro no Core
 

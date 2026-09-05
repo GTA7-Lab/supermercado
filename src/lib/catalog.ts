@@ -47,7 +47,9 @@ export interface NewProduct {
   barcode?: string;
 }
 
-export function createProduct(input: NewProduct): { product: Product; persist: SaveResult } {
+export async function createProduct(
+  input: NewProduct,
+): Promise<{ product: Product; persist: SaveResult }> {
   const id = nextProductId();
   const product: Product = {
     id,
@@ -63,7 +65,7 @@ export function createProduct(input: NewProduct): { product: Product; persist: S
     perishable: false,
   };
   allProducts().push(product);
-  return { product: { ...product }, persist: save() };
+  return { product: { ...product }, persist: await save() };
 }
 
 export interface ProductPatch {
@@ -77,10 +79,10 @@ export interface ProductPatch {
   aisle?: string;
 }
 
-export function updateProduct(
+export async function updateProduct(
   idOrName: string,
   patch: ProductPatch,
-): { product?: Product; persist?: SaveResult } {
+): Promise<{ product?: Product; persist?: SaveResult }> {
   const i = productIndex(idOrName);
   if (i === -1) return {};
   const p = allProducts()[i];
@@ -92,14 +94,16 @@ export function updateProduct(
   if (patch.aisle?.trim()) p.aisle = patch.aisle.trim();
   if (patch.price !== undefined) p.price = Math.max(0, Number(patch.price));
   if (patch.stock !== undefined) p.stock = Math.max(0, Math.round(patch.stock));
-  return { product: { ...p }, persist: save() };
+  return { product: { ...p }, persist: await save() };
 }
 
-export function deleteProduct(idOrName: string): { product?: Product; persist?: SaveResult } {
+export async function deleteProduct(
+  idOrName: string,
+): Promise<{ product?: Product; persist?: SaveResult }> {
   const i = productIndex(idOrName);
   if (i === -1) return {};
   const [removed] = allProducts().splice(i, 1);
-  return { product: removed, persist: save() };
+  return { product: removed, persist: await save() };
 }
 
 // --------------------------------------------------- espacos de servico
@@ -126,10 +130,9 @@ export interface NewServiceSpace {
   type?: string;
 }
 
-export function createServiceSpace(input: NewServiceSpace = {}): {
-  space: ServiceSpace;
-  persist: SaveResult;
-} {
+export async function createServiceSpace(
+  input: NewServiceSpace = {},
+): Promise<{ space: ServiceSpace; persist: SaveResult }> {
   const nums = spaces()
     .map((s) => Number(/^svc-(\d+)$/.exec(s.id)?.[1]))
     .filter((n) => Number.isFinite(n));
@@ -142,7 +145,7 @@ export function createServiceSpace(input: NewServiceSpace = {}): {
     type: (input.type ?? "").trim() || null,
   };
   spaces().push(space);
-  return { space: { ...space }, persist: save() };
+  return { space: { ...space }, persist: await save() };
 }
 
 export interface ServiceSpacePatch {
@@ -151,10 +154,10 @@ export interface ServiceSpacePatch {
   status?: "disponivel" | "ocupado";
 }
 
-export function updateServiceSpace(
+export async function updateServiceSpace(
   id: string,
   patch: ServiceSpacePatch,
-): { space?: ServiceSpace; persist?: SaveResult } {
+): Promise<{ space?: ServiceSpace; persist?: SaveResult }> {
   const i = spaceIndex(id);
   if (i === -1) return {};
   const s = spaces()[i];
@@ -162,12 +165,14 @@ export function updateServiceSpace(
   if (patch.type !== undefined) s.type = patch.type ? String(patch.type).trim() : null;
   if (patch.status !== undefined) s.status = patch.status;
   else s.status = s.tenant ? "ocupado" : "disponivel";
-  return { space: { ...s }, persist: save() };
+  return { space: { ...s }, persist: await save() };
 }
 
-export function deleteServiceSpace(id: string): { space?: ServiceSpace; persist?: SaveResult } {
+export async function deleteServiceSpace(
+  id: string,
+): Promise<{ space?: ServiceSpace; persist?: SaveResult }> {
   const i = spaceIndex(id);
   if (i === -1) return {};
   const [removed] = spaces().splice(i, 1);
-  return { space: removed, persist: save() };
+  return { space: removed, persist: await save() };
 }

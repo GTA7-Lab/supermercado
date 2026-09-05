@@ -46,7 +46,10 @@ export type PurchaseOutcome =
       persist: SaveResult;
     };
 
-export function registerPurchase(lines: PurchaseLine[], opts: PurchaseOptions = {}): PurchaseOutcome {
+export async function registerPurchase(
+  lines: PurchaseLine[],
+  opts: PurchaseOptions = {},
+): Promise<PurchaseOutcome> {
   if (!lines || lines.length === 0) {
     return { ok: false, error: "Diga pelo menos um produto e a quantidade para registrar a compra." };
   }
@@ -102,7 +105,7 @@ export function registerPurchase(lines: PurchaseLine[], opts: PurchaseOptions = 
   };
   getData().purchases.push(order);
 
-  return { ok: true, order, sold, total, customer, points_earned: pointsEarned, persist: save() };
+  return { ok: true, order, sold, total, customer, points_earned: pointsEarned, persist: await save() };
 }
 
 export function listPurchases(): Purchase[] {

@@ -44,13 +44,20 @@ Escrita de admin (com `magic_word`): `create_product`, `update_product`, `delete
 - `search_products`: `query` casa por token (aceita a frase inteira do Core); os dados
   estruturados vão em `structuredContent` (via `outputSchema` no `registerTool`) com `items`+`preco`.
 - **Persistência:** `src/lib/repository.ts` é o dono único dos dados. Lê `data/supermarket.json`
-  do disco (fallback: seed embutido no bundle) e `save()` grava de volta no arquivo.
-  Toda escrita chama `save()` e a resposta diz o resultado via `savedNote()`:
-  - **Local (`npm run dev`/`start`)**: grava no `data/supermarket.json` — persiste de verdade,
-    aparece na página `/` e sobrevive a restart.
-  - **Vercel**: disco somente leitura → `save()` falha de forma controlada, a mudança vale
-    só enquanto a instância está quente e a resposta avisa "não consegui salvar".
-- `catalog.ts` / `customers.ts` / `sales.ts` operam sobre `repository.getData()` (mesma instância).
+  do disco (fallback: seed embutido no bundle). `save()` é async e:
+  1. tenta gravar no `data/supermarket.json` local — funciona em `npm run dev`/`start`;
+  2. se o disco for somente leitura (Vercel) **e** houver `GITHUB_TOKEN`, faz um **commit
+     do arquivo no repo** via API do GitHub (`PUT .../contents/data/supermarket.json`);
+     o próprio deploy git-linkado da Vercel republica com os dados novos em ~1 min;
+  3. sem token, a alteração vale só enquanto a instância está quente.
+  A resposta de cada escrita informa o resultado via `savedNote()`.
+- **Env vars** (Vercel → Settings → Environment Variables):
+  `GITHUB_TOKEN` (fine-grained PAT, repo `GTA7-Lab/supermercado`, Contents: Read and write).
+  Opcionais: `GITHUB_REPO`, `GITHUB_BRANCH`, `GITHUB_DATA_PATH`, `FORCE_GITHUB_PERSIST=1`
+  (força o caminho de commit mesmo com disco gravável — útil p/ teste).
+- `catalog.ts` / `customers.ts` / `sales.ts` operam sobre `repository.getData()`; suas
+  funções de escrita são async (`await save()`) e o `route.ts` faz `await` nelas.
+- ⚠️ Cada escrita na Vercel = 1 commit = 1 rebuild/deploy (~40-60s). Inclusive `register_purchase`.
 
 ## Arquivos principais
 
