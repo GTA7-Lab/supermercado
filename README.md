@@ -4,7 +4,8 @@ Entidade **supermercado** da cidade digital GTA7 Lab: alimentos, bebidas, limpez
 com padaria, açougue e peixaria. Expõe consulta de produtos, estoque e informações da loja
 por página web, API REST e **MCP** (para o Core Orchestrator).
 
-Esta entidade vive na pasta `entities/supermercado/` do repositório da cidade.
+Repositório próprio: [`GTA7-Lab/supermercado`](https://github.com/GTA7-Lab/supermercado).
+O Core Orchestrator da cidade fica em [`GTA7-Lab/gta7-lab`](https://github.com/GTA7-Lab/gta7-lab).
 
 - **Produção:** https://gta7-lab-supermercado-b-on-d.vercel.app
 - **MCP (HTTP):** https://gta7-lab-supermercado-b-on-d.vercel.app/api/mcp
@@ -18,7 +19,6 @@ Sem banco de dados: os dados vêm de `data/supermarket.json`.
 ## Rodar localmente
 
 ```bash
-cd entities/supermercado
 npm install
 npm run dev       # http://localhost:3000
 npm run build     # build de produção
@@ -60,10 +60,12 @@ npx @modelcontextprotocol/inspector
 
 ## Deploy na Vercel
 
-Projeto Next.js padrão — importar o repositório na Vercel com **Root Directory = `entities/supermercado`**
-(sem variáveis de ambiente). O MCP fica em `https://<domínio>/api/mcp`.
+Projeto Next.js padrão — importar `GTA7-Lab/supermercado` na Vercel (Root Directory na raiz,
+sem variáveis de ambiente). Projeto Vercel atual: `gta7-lab-supermercado`.
+O MCP fica em `https://<domínio>/api/mcp`.
 
 ## Registro no Core
 
-Já registrada em `core/data/entities.json` com `transport: "http"`, tag `grocery` e o endpoint
-de produção acima. A tag `grocery` foi adicionada em `core/src/lexicon.ts`.
+Registrada no repo do Core (`GTA7-Lab/gta7-lab`) em `core/data/entities.json` com
+`transport: "http"`, tag `grocery` e o endpoint de produção acima. A tag `grocery`
+foi adicionada em `core/src/lexicon.ts`.
