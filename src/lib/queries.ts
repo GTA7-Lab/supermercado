@@ -1,5 +1,6 @@
 // Funcoes de consulta reutilizadas pela pagina web, pela API REST e pelas MCP tools.
-import { store, type Product } from "./data";
+import type { Product } from "./data";
+import { store } from "./repository";
 import { allProducts } from "./catalog";
 
 function norm(s: string): string {

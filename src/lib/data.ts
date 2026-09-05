@@ -1,5 +1,5 @@
-// Carrega os dados da entidade a partir do arquivo JSON local.
-// Primeira versao: sem banco de dados.
+// Tipos da entidade + seed embutido no bundle (fallback de leitura).
+// O acesso mutavel aos dados e feito por src/lib/repository.ts.
 import raw from "../../data/supermarket.json";
 
 export interface Product {
@@ -71,9 +71,5 @@ export interface SupermarketData {
   purchases: Purchase[];
 }
 
-export const data: SupermarketData = raw as SupermarketData;
-
-export const store = data.store;
-export const products = data.products;
-export const customers = data.customers;
-export const purchases = data.purchases;
+/** Seed embutido no bundle. Nao mutar — use repository.getData(). */
+export const SEED: SupermarketData = raw as SupermarketData;

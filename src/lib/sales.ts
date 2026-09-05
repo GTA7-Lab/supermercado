@@ -1,6 +1,7 @@
 // Registro de compras. Toda compra baixa o estoque dos produtos vendidos.
-// Estado em memoria (seed do JSON) — na Vercel nao persiste entre execucoes.
-import { purchases as purchaseSeed, type Customer, type Purchase } from "./data";
+// Estado real em data/supermarket.json via repository.ts.
+import { getData, save, type SaveResult } from "./repository";
+import type { Customer, Purchase } from "./data";
 import { allProducts, findProduct } from "./catalog";
 import { addPoints, findCustomer } from "./customers";
 
@@ -8,8 +9,12 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 /** 1 ponto de fidelidade por real gasto. */
 const POINTS_PER_BRL = 1;
 
-let sales: Purchase[] = purchaseSeed.map((p) => ({ ...p }));
-let orderSeq = 2000;
+function nextOrderId(): string {
+  const nums = getData()
+    .purchases.map((o) => Number(/^order-(\d+)$/.exec(o.id)?.[1]))
+    .filter((n) => Number.isFinite(n));
+  return `order-${(nums.length ? Math.max(...nums) : 1000) + 1}`;
+}
 
 export interface PurchaseLine {
   product: string;
@@ -38,6 +43,7 @@ export type PurchaseOutcome =
       total: number;
       customer?: Customer;
       points_earned: number;
+      persist: SaveResult;
     };
 
 export function registerPurchase(lines: PurchaseLine[], opts: PurchaseOptions = {}): PurchaseOutcome {
@@ -63,7 +69,7 @@ export function registerPurchase(lines: PurchaseLine[], opts: PurchaseOptions = 
     resolved.push({ id: p.id, name: p.name, price: p.price, qty });
   }
 
-  // 2) baixa o estoque no catalogo vivo
+  // 2) baixa o estoque
   const live = allProducts();
   const sold: SoldItem[] = resolved.map((r) => {
     const lp = live.find((x) => x.id === r.id)!;
@@ -85,9 +91,8 @@ export function registerPurchase(lines: PurchaseLine[], opts: PurchaseOptions = 
   }
 
   // 4) grava o pedido
-  orderSeq += 1;
   const order: Purchase = {
-    id: `order-${orderSeq}`,
+    id: nextOrderId(),
     customer_id: customer?.id ?? "",
     datetime: new Date().toISOString(),
     checkout: 0,
@@ -95,11 +100,11 @@ export function registerPurchase(lines: PurchaseLine[], opts: PurchaseOptions = 
     items: sold.map((i) => ({ product_id: i.product_id, qty: i.qty, unit_price: i.unit_price })),
     total,
   };
-  sales.push(order);
+  getData().purchases.push(order);
 
-  return { ok: true, order, sold, total, customer, points_earned: pointsEarned };
+  return { ok: true, order, sold, total, customer, points_earned: pointsEarned, persist: save() };
 }
 
 export function listPurchases(): Purchase[] {
-  return sales.map((s) => ({ ...s }));
+  return getData().purchases.map((s) => ({ ...s }));
 }

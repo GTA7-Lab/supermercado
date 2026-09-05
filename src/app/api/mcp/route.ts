@@ -11,7 +11,7 @@
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { checkStock, searchProducts } from "@/lib/queries";
-import { store } from "@/lib/data";
+import { savedNote, store } from "@/lib/repository";
 import {
   createProduct,
   createServiceSpace,
@@ -36,8 +36,6 @@ export const maxDuration = 60;
 const MAGIC = (process.env.GTA7_MAGIC_WORD ?? "ericgomes").trim();
 const brl = (n: number) => "R$ " + n.toFixed(2).replace(".", ",");
 const text = (s: string) => ({ content: [{ type: "text" as const, text: s }] });
-const NAO_PERSISTE =
-  "Obs.: nesta versao publicada a mudanca vale so durante a sessao — nao fica salva para sempre.";
 
 /** Devolve uma resposta de recusa (texto) se a palavra magica estiver errada; senao null. */
 function semPalavraMagica(word: string | undefined) {
@@ -192,7 +190,7 @@ const handler = createMcpHandler((server) => {
       } else if (customer) {
         msg += `\n(Nao achei o cliente "${customer}", entao os pontos nao foram atribuidos.)`;
       }
-      return text(`${msg} ${NAO_PERSISTE}`);
+      return text(`${msg} ${savedNote(r.persist)}`);
     },
   );
 
@@ -239,8 +237,8 @@ const handler = createMcpHandler((server) => {
     async ({ magic_word, ...input }) => {
       const bloqueio = semPalavraMagica(magic_word);
       if (bloqueio) return bloqueio;
-      const p = createProduct(input);
-      return text(`Pronto! Cadastrei ${descreveProduto(p)}. ${NAO_PERSISTE}`);
+      const { product, persist } = createProduct(input);
+      return text(`Pronto! Cadastrei ${descreveProduto(product)}. ${savedNote(persist)}`);
     },
   );
 
@@ -267,9 +265,9 @@ const handler = createMcpHandler((server) => {
       if (bloqueio) return bloqueio;
       const hasChange = Object.values(patch).some((v) => v !== undefined);
       if (!hasChange) return text("Diga o que mudar: preco, estoque, corredor, nome, departamento...");
-      const p = updateProduct(product, patch);
+      const { product: p, persist } = updateProduct(product, patch);
       return p
-        ? text(`Atualizei: agora ${descreveProduto(p)}. ${NAO_PERSISTE}`)
+        ? text(`Atualizei: agora ${descreveProduto(p)}. ${savedNote(persist!)}`)
         : text(`Nao encontrei nenhum produto para "${product}", entao nada foi alterado.`);
     },
   );
@@ -287,9 +285,9 @@ const handler = createMcpHandler((server) => {
     async ({ magic_word, product }) => {
       const bloqueio = semPalavraMagica(magic_word);
       if (bloqueio) return bloqueio;
-      const p = deleteProduct(product);
+      const { product: p, persist } = deleteProduct(product);
       return p
-        ? text(`Removi ${p.name} (${p.id}) do catalogo. ${NAO_PERSISTE}`)
+        ? text(`Removi ${p.name} (${p.id}) do catalogo. ${savedNote(persist!)}`)
         : text(`Nao encontrei nenhum produto para "${product}", entao nada foi removido.`);
     },
   );
@@ -354,8 +352,8 @@ const handler = createMcpHandler((server) => {
     async ({ magic_word, tenant, type }) => {
       const bloqueio = semPalavraMagica(magic_word);
       if (bloqueio) return bloqueio;
-      const s = createServiceSpace({ tenant, type });
-      return text(`Criei o espaco de servico ${descreveEspaco(s)}. ${NAO_PERSISTE}`);
+      const { space, persist } = createServiceSpace({ tenant, type });
+      return text(`Criei o espaco de servico ${descreveEspaco(space)}. ${savedNote(persist)}`);
     },
   );
 
@@ -378,9 +376,9 @@ const handler = createMcpHandler((server) => {
       if (tenant === undefined && type === undefined) {
         return text("Diga o que mudar: o lojista (tenant) ou o tipo de servico.");
       }
-      const s = updateServiceSpace(space, { tenant, type });
+      const { space: s, persist } = updateServiceSpace(space, { tenant, type });
       return s
-        ? text(`Atualizei: ${descreveEspaco(s)}. ${NAO_PERSISTE}`)
+        ? text(`Atualizei: ${descreveEspaco(s)}. ${savedNote(persist!)}`)
         : text(`Nao encontrei nenhum espaco de servico para "${space}", entao nada foi alterado.`);
     },
   );
@@ -398,9 +396,9 @@ const handler = createMcpHandler((server) => {
     async ({ magic_word, space }) => {
       const bloqueio = semPalavraMagica(magic_word);
       if (bloqueio) return bloqueio;
-      const s = deleteServiceSpace(space);
+      const { space: s, persist } = deleteServiceSpace(space);
       return s
-        ? text(`Removi o espaco ${s.id}${s.tenant ? ` (era de ${s.tenant})` : ""}. ${NAO_PERSISTE}`)
+        ? text(`Removi o espaco ${s.id}${s.tenant ? ` (era de ${s.tenant})` : ""}. ${savedNote(persist!)}`)
         : text(`Nao encontrei nenhum espaco de servico para "${space}", entao nada foi removido.`);
     },
   );
@@ -457,8 +455,8 @@ const handler = createMcpHandler((server) => {
     async ({ magic_word, name, loyalty_id, points }) => {
       const bloqueio = semPalavraMagica(magic_word);
       if (bloqueio) return bloqueio;
-      const c = createCustomer({ name, loyalty_id, points });
-      return text(`Pronto! Cadastrei ${descreveCliente(c)}. ${NAO_PERSISTE}`);
+      const { customer: c, persist } = createCustomer({ name, loyalty_id, points });
+      return text(`Pronto! Cadastrei ${descreveCliente(c)}. ${savedNote(persist)}`);
     },
   );
 
@@ -481,9 +479,9 @@ const handler = createMcpHandler((server) => {
       if (name === undefined && loyalty_id === undefined && points === undefined) {
         return text("Diga o que voce quer mudar: nome, cartao fidelidade ou pontos.");
       }
-      const c = updateCustomer(customer, { name, loyalty_id, points });
+      const { customer: c, persist } = updateCustomer(customer, { name, loyalty_id, points });
       return c
-        ? text(`Atualizei: agora ${descreveCliente(c)}. ${NAO_PERSISTE}`)
+        ? text(`Atualizei: agora ${descreveCliente(c)}. ${savedNote(persist!)}`)
         : text(`Nao encontrei nenhum cliente para "${customer}", entao nada foi alterado.`);
     },
   );
@@ -501,9 +499,9 @@ const handler = createMcpHandler((server) => {
     async ({ magic_word, customer }) => {
       const bloqueio = semPalavraMagica(magic_word);
       if (bloqueio) return bloqueio;
-      const c = deleteCustomer(customer);
+      const { customer: c, persist } = deleteCustomer(customer);
       return c
-        ? text(`Removi ${c.name} (cliente ${c.id}) do cadastro. ${NAO_PERSISTE}`)
+        ? text(`Removi ${c.name} (cliente ${c.id}) do cadastro. ${savedNote(persist!)}`)
         : text(`Nao encontrei nenhum cliente para "${customer}", entao nada foi removido.`);
     },
   );

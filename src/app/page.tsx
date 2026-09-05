@@ -1,5 +1,5 @@
 import { searchProducts, listDepartments } from "@/lib/queries";
-import { store } from "@/lib/data";
+import { store } from "@/lib/repository";
 
 type SP = Record<string, string | string[] | undefined>;
 

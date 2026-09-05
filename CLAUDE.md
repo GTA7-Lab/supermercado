@@ -43,18 +43,23 @@ Escrita de admin (com `magic_word`): `create_product`, `update_product`, `delete
 
 - `search_products`: `query` casa por token (aceita a frase inteira do Core); os dados
   estruturados vão em `structuredContent` (via `outputSchema` no `registerTool`) com `items`+`preco`.
-- Estado mutável em `src/lib/catalog.ts` (produtos + espaços de serviço) e
-  `src/lib/customers.ts` (clientes), semeado do JSON. **Não persiste na Vercel**
-  (disco somente leitura) — cada resposta de escrita avisa isso.
-- `src/lib/queries.ts` lê produtos de `catalog.allProducts()` (para os criados via MCP aparecerem nas buscas).
+- **Persistência:** `src/lib/repository.ts` é o dono único dos dados. Lê `data/supermarket.json`
+  do disco (fallback: seed embutido no bundle) e `save()` grava de volta no arquivo.
+  Toda escrita chama `save()` e a resposta diz o resultado via `savedNote()`:
+  - **Local (`npm run dev`/`start`)**: grava no `data/supermarket.json` — persiste de verdade,
+    aparece na página `/` e sobrevive a restart.
+  - **Vercel**: disco somente leitura → `save()` falha de forma controlada, a mudança vale
+    só enquanto a instância está quente e a resposta avisa "não consegui salvar".
+- `catalog.ts` / `customers.ts` / `sales.ts` operam sobre `repository.getData()` (mesma instância).
 
 ## Arquivos principais
 
-- `data/supermarket.json` — dados da entidade
-- `src/lib/data.ts` — carrega o JSON + tipos
+- `data/supermarket.json` — dados da entidade (datastore real, lido/escrito por repository.ts)
+- `src/lib/data.ts` — tipos + `SEED` (import do JSON, fallback de leitura)
+- `src/lib/repository.ts` — dono único dos dados: `getData()`, `save()`, `savedNote()`, `store`
 - `src/lib/queries.ts` — `searchProducts`, `checkStock`, `listDepartments` (lógica compartilhada)
-- `src/lib/catalog.ts` — CRUD em memória de produtos e espaços de serviço (seed do JSON)
-- `src/lib/customers.ts` — CRUD de clientes em memória + `addPoints` (seed do JSON)
+- `src/lib/catalog.ts` — CRUD de produtos e espaços de serviço (via repository)
+- `src/lib/customers.ts` — CRUD de clientes + `addPoints` (via repository)
 - `src/lib/sales.ts` — `registerPurchase` (baixa estoque + grava pedido + pontos), `listPurchases`
 - `src/app/page.tsx` — página de consulta (form + tabela)
 - `src/app/api/products/route.ts` — REST: `GET /api/products?query=&department=&max_price=&in_stock_only=`
