@@ -23,7 +23,9 @@ const handler = createMcpHandler(
       },
       async (args) => {
         const result = searchProducts(args);
-        return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+        // `items` + `preco` sao os apelidos que o Core Orchestrator reconhece.
+        const items = result.products.map((p) => ({ ...p, preco: p.price }));
+        return { content: [{ type: "text", text: JSON.stringify({ ...result, items }, null, 2) }] };
       },
     );
 

@@ -2,7 +2,7 @@
 
 ## Entidade
 
-- **id:** `supermarket`
+- **id:** `supermercado` (no registro do Core e no `manifest.json`)
 - **Nome:** Supermercado GTA7 Central
 - **Objetivo:** ponto de compra da cidade (alimentos, bebidas, limpeza, bazar) com
   padaria, açougue e peixaria. Expõe consulta de produtos/estoque via web, REST e MCP.
@@ -29,9 +29,12 @@ purchases: [{ id, customer_id, datetime, checkout, payment_method,
 
 | tool | params | retorno |
 |------|--------|---------|
-| `search_products` | `query?`, `department?`, `max_price?`, `in_stock_only?` | `{ count, filters, products[] }` |
+| `search_products` | `query?`, `department?`, `max_price?`, `in_stock_only?` | `{ count, filters, products[], items[] }` |
 | `check_stock` | `product` (id \| nome \| barcode) | `{ found, product?, message }` |
 | `get_store_info` | — | dados da loja + `service_spaces` |
+
+`search_products`: `query` casa por token (aceita frase inteira do Core) e o retorno traz
+`items` com alias `preco` — o formato que o Core Orchestrator lê.
 
 ## Arquivos principais
 
@@ -53,20 +56,19 @@ purchases: [{ id, customer_id, datetime, checkout, payment_method,
 
 ## Status atual
 
-v0.1 pronta e testada localmente (`npm run build` OK; `/api/mcp`, `/api/products`,
-`/api/manifest` validados via curl).
+v0.1 **no ar e integrada**.
 
-- **Repo:** monorepo `github.com/ericmgomes/gta7-lab` (uma pasta por entidade).
-  Esta entidade em `supermercado/`. Checkout local sobre `origin/main`; commit da
-  entidade feito localmente, falta `git push` (precisa `gh auth login`).
-- **Vercel:** projeto `gta7-lab-supermercado` (deploy production feito via MCP da Vercel).
-  Produção com Vercel Authentication (SSO) ligada — desativar em
-  Settings > Deployment Protection para o Core acessar `/api/mcp`.
-  Root Directory do projeto Vercel = `supermercado`.
+- **Repo:** monorepo `github.com/ericmgomes/gta7-lab`, esta entidade em `entities/supermercado/`.
+- **Vercel:** projeto `gta7-lab-supermercado`, produção pública (SSO desligado):
+  `https://gta7-lab-supermercado-b-on-d.vercel.app`. Deploy via MCP da Vercel
+  (Root Directory = `entities/supermercado`). Git-link GitHub↔Vercel: opcional/pendente.
+- **Core:** registrada em `core/data/entities.json` (`transport: http`, tag `grocery`,
+  endpoint acima); tag `grocery` adicionada em `core/src/lexicon.ts`.
+  `cd core && npm run build && npm run smoke` passa com as 3 entidades.
+- Endpoints públicos validados: `/`, `/api/products`, `/api/manifest`, `/api/mcp`
+  (initialize + tools/list + tools/call). Orquestração grocery ponta a ponta OK.
 
 ## Próxima tarefa
 
-1. `gh auth login`, depois `git push` (main direto ou branch + PR).
-2. Desativar Deployment Protection na Vercel e confirmar `/api/manifest` público.
-3. Ligar o repo GitHub ao projeto Vercel (auto-deploy) com Root Directory `supermercado`.
-4. Registrar a entidade no Core Orchestrator usando `/api/manifest`.
+- (Opcional) ligar o repo GitHub ao projeto Vercel para auto-deploy on push.
+- Se o endpoint de produção mudar, atualizar `core/data/entities.json`.

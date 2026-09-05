@@ -22,11 +22,16 @@ export interface SearchProductsResult {
 }
 
 export function searchProducts(input: SearchProductsInput = {}): SearchProductsResult {
-  const q = input.query ? norm(input.query) : null;
+  // `query` pode vir como uma frase inteira do usuario (via Core Orchestrator).
+  // Casa por token: o produto entra se contiver qualquer palavra (>= 3 letras) da busca.
+  const tokens = input.query
+    ? [...new Set(norm(input.query).split(/[^a-z0-9]+/).filter((t) => t.length >= 3))]
+    : [];
   const dep = input.department ? norm(input.department) : null;
 
   const list = products.filter((p) => {
-    if (q && !norm(`${p.name} ${p.brand} ${p.category}`).includes(q)) return false;
+    const haystack = norm(`${p.name} ${p.brand} ${p.category} ${p.department}`);
+    if (tokens.length && !tokens.some((t) => haystack.includes(t))) return false;
     if (dep && norm(p.department) !== dep) return false;
     if (typeof input.max_price === "number" && p.price > input.max_price) return false;
     if (input.in_stock_only && p.stock <= 0) return false;

@@ -1,17 +1,24 @@
-# Supermercado — Entidade GTA7 Lab
+# Supermercado GTA7 Central — GTA7 Lab
 
-Ponto de compra da cidade digital GTA7 Lab: alimentos, bebidas, limpeza e bazar,
-com padaria, açougue e peixaria. Expõe consulta de produtos e estoque por página
-web, API REST e **MCP** (para o Core Orchestrator da GTA7 Lab).
+Entidade **supermercado** da cidade digital GTA7 Lab: alimentos, bebidas, limpeza e bazar,
+com padaria, açougue e peixaria. Expõe consulta de produtos, estoque e informações da loja
+por página web, API REST e **MCP** (para o Core Orchestrator).
+
+Esta entidade vive na pasta `entities/supermercado/` do repositório da cidade.
+
+- **Produção:** https://gta7-lab-supermercado-b-on-d.vercel.app
+- **MCP (HTTP):** https://gta7-lab-supermercado-b-on-d.vercel.app/api/mcp
+- **Manifesto:** https://gta7-lab-supermercado-b-on-d.vercel.app/api/manifest
 
 ## Stack
 
-TypeScript · Next.js 15 (App Router) · [`mcp-handler`](https://www.npmjs.com/package/mcp-handler) · Zod
+TypeScript · Next.js 15 (App Router) · [`mcp-handler`](https://www.npmjs.com/package/mcp-handler) · Zod.
 Sem banco de dados: os dados vêm de `data/supermarket.json`.
 
 ## Rodar localmente
 
 ```bash
+cd entities/supermercado
 npm install
 npm run dev       # http://localhost:3000
 npm run build     # build de produção
@@ -30,9 +37,12 @@ npm run build     # build de produção
 
 | Tool | Parâmetros | Retorno |
 |------|-----------|---------|
-| `search_products` | `query?`, `department?`, `max_price?`, `in_stock_only?` | `{ count, filters, products[] }` |
+| `search_products` | `query?`, `department?`, `max_price?`, `in_stock_only?` | `{ count, filters, products[], items[] }` |
 | `check_stock` | `product` (id, nome ou código de barras) | `{ found, product?, message }` |
-| `get_store_info` | — | dados da loja + espaços de serviço |
+| `get_store_info` | — | dados da loja + `service_spaces` |
+
+`search_products` casa `query` por token (aceita a frase inteira vinda do Core) e devolve
+`items` com o alias `preco` — os campos que o Core Orchestrator reconhece.
 
 ### Testar o MCP local
 
@@ -48,7 +58,12 @@ npx @modelcontextprotocol/inspector
 - `customers` — base de clientes / fidelidade
 - `purchases` — histórico de compras
 
-## Deploy
+## Deploy na Vercel
 
-Publicado na Vercel. O framework é detectado automaticamente (Next.js).
-Em monorepo, configure o **Root Directory** do projeto Vercel para a pasta desta entidade.
+Projeto Next.js padrão — importar o repositório na Vercel com **Root Directory = `entities/supermercado`**
+(sem variáveis de ambiente). O MCP fica em `https://<domínio>/api/mcp`.
+
+## Registro no Core
+
+Já registrada em `core/data/entities.json` com `transport: "http"`, tag `grocery` e o endpoint
+de produção acima. A tag `grocery` foi adicionada em `core/src/lexicon.ts`.
