@@ -58,7 +58,7 @@ purchases: [{ id, customer_id, datetime, checkout, payment_method,
 
 v0.1 **no ar e integrada**.
 
-- **Repo:** monorepo `github.com/ericmgomes/gta7-lab`, esta entidade em `entities/supermercado/`.
+- **Repo:** monorepo `github.com/GTA7-Lab/gta7-lab`, esta entidade em `entities/supermercado/`.
 - **Vercel:** projeto `gta7-lab-supermercado`, produção pública (SSO desligado):
   `https://gta7-lab-supermercado-b-on-d.vercel.app`. Deploy via MCP da Vercel
   (Root Directory = `entities/supermercado`). Git-link GitHub↔Vercel: opcional/pendente.
