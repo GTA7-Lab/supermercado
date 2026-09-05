@@ -27,20 +27,30 @@ purchases: [{ id, customer_id, datetime, checkout, payment_method,
 
 ## MCP tools — `src/app/api/mcp/route.ts` (endpoint `/api/mcp`, streamable-http)
 
-| tool | params | retorno |
-|------|--------|---------|
-| `search_products` | `query?`, `department?`, `max_price?`, `in_stock_only?` | `{ count, filters, products[], items[] }` |
-| `check_stock` | `product` (id \| nome \| barcode) | `{ found, product?, message }` |
-| `get_store_info` | — | dados da loja + `service_spaces` |
+**Regra:** toda resposta MCP é texto em linguagem natural, amigável, sem jargão/JSON cru.
 
-`search_products`: `query` casa por token (aceita frase inteira do Core) e o retorno traz
-`items` com alias `preco` — o formato que o Core Orchestrator lê.
+| tool | params | o que faz |
+|------|--------|-----------|
+| `search_products` | `query?`, `department?`, `max_price?`, `in_stock_only?` | lista produtos em texto; também devolve `structuredContent {resumo,quantidade,items[]}` p/ o Core |
+| `check_stock` | `product` (id \| nome \| barcode) | disponibilidade, preço e corredor de 1 produto |
+| `get_store_info` | — | endereço, horário, estrutura e espaços de serviço |
+| `list_customers` | `query?` | lista clientes cadastrados (filtro opcional) |
+| `get_customer` | `customer` (id \| nome \| fidelidade) | dados de 1 cliente |
+| `create_customer` | `name`, `loyalty_id?`, `points?` | cadastra cliente |
+| `update_customer` | `customer`, `name?`, `loyalty_id?`, `points?` | atualiza cliente |
+| `delete_customer` | `customer` | remove cliente |
+
+- `search_products`: `query` casa por token (aceita a frase inteira do Core); os dados
+  estruturados vão em `structuredContent` (via `outputSchema` no `registerTool`) com `items`+`preco`.
+- CRUD de clientes: estado em memória (`src/lib/customers.ts`), **não persiste na Vercel**
+  (disco somente leitura) — a resposta avisa isso.
 
 ## Arquivos principais
 
 - `data/supermarket.json` — dados da entidade
 - `src/lib/data.ts` — carrega o JSON + tipos
 - `src/lib/queries.ts` — `searchProducts`, `checkStock`, `listDepartments` (lógica compartilhada)
+- `src/lib/customers.ts` — CRUD de clientes em memória (seed do JSON)
 - `src/app/page.tsx` — página de consulta (form + tabela)
 - `src/app/api/products/route.ts` — REST: `GET /api/products?query=&department=&max_price=&in_stock_only=`
 - `src/app/api/mcp/route.ts` — servidor MCP remoto
