@@ -92,7 +92,14 @@ async function commitToGitHub(content: string): Promise<SaveResult> {
       res = await put(knownSha);
     }
     if (!res.ok) {
-      return { saved: false, reason: `GitHub respondeu ${res.status}` };
+      let detail = "";
+      try {
+        const b = (await res.json()) as { message?: string };
+        if (b?.message) detail = ` — ${b.message}`;
+      } catch {
+        /* sem corpo */
+      }
+      return { saved: false, reason: `GitHub respondeu ${res.status}${detail}` };
     }
     const body = (await res.json()) as {
       content?: { sha?: string };
