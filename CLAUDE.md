@@ -64,22 +64,21 @@ Escrita de admin (com `magic_word`): `create_product`, `update_product`, `delete
 - `data/supermarket.json` — dados da entidade (datastore real, lido/escrito por repository.ts)
 - `src/lib/data.ts` — tipos + `SEED` (import do JSON, fallback de leitura)
 - `src/lib/repository.ts` — dono único dos dados: `getData()`, `save()`, `savedNote()`, `store`
-- `src/lib/queries.ts` — `searchProducts`, `checkStock`, `listDepartments` (lógica compartilhada)
+- `src/lib/queries.ts` — `searchProducts`, `checkStock` (lógica de leitura, só usada pelo MCP)
 - `src/lib/catalog.ts` — CRUD de produtos e espaços de serviço (via repository)
 - `src/lib/customers.ts` — CRUD de clientes + `addPoints` (via repository)
 - `src/lib/sales.ts` — `registerPurchase` (baixa estoque + grava pedido + pontos), `listPurchases`
-- `src/app/page.tsx` — página de consulta (form + tabela)
-- `src/app/api/products/route.ts` — REST: `GET /api/products?query=&department=&max_price=&in_stock_only=`
-- `src/app/api/mcp/route.ts` — servidor MCP remoto
-- `src/app/api/manifest/route.ts` — `GET /api/manifest` para o Core
+- `src/app/api/mcp/route.ts` — servidor MCP remoto — **único acesso aos dados**
+- `src/app/api/manifest/route.ts` — `GET /api/manifest`: nome + lista de tools (sem dados), para o Core
+- `src/app/page.tsx` — landing estática, sem dados
 - `manifest.json` — manifesto estático da entidade (para o Core Orchestrator)
 
 ## Decisões
 
-- JSON importado via `import` (bundled) — mais simples e funciona em serverless na Vercel.
-- Lógica de busca única em `queries.ts`, reusada por web + REST + MCP.
+- **Acesso aos dados só por MCP** (`/api/mcp`). Não há endpoint REST de dados; a página `/`
+  não lista nada. `/api/manifest` expõe só metadados (nome, tools), nunca linhas de dados.
 - `basePath: "/api"` no `createMcpHandler` para o endpoint ficar em `/api/mcp`.
-- Sem auth, sem pagamentos, sem escrita nos dados nesta versão.
+- Escrita gated por `magic_word` (admin) exceto `register_purchase`. Ver seção MCP tools.
 
 ## Status atual
 
@@ -93,8 +92,8 @@ v0.1 **no ar e integrada**.
 - **Core:** registrada no repo `GTA7-Lab/gta7-lab` em `core/data/entities.json`
   (`transport: http`, tag `grocery`, endpoint acima); tag `grocery` em `core/src/lexicon.ts`.
   `cd ../gta7-lab-monorepo/core && npm run build && npm run smoke` passa com as 3 entidades.
-- Endpoints públicos validados: `/`, `/api/products`, `/api/manifest`, `/api/mcp`
-  (initialize + tools/list + tools/call). Orquestração grocery ponta a ponta OK.
+- Acesso a dados: **somente `/api/mcp`**. `/api/products` removido; `/` é landing sem dados.
+- MCP validado (initialize + tools/list + tools/call). Orquestração grocery ponta a ponta OK.
 
 ## Próxima tarefa
 

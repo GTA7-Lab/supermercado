@@ -13,7 +13,7 @@
     "gerenciar_espacos_servico",
     "gerenciar_clientes"
   ],
-  "notes": "Respostas das tools MCP sempre em linguagem natural e amigavel, sem jargao. Comprar (register_purchase) baixa o estoque e NAO exige palavra magica. As escritas de admin (produtos, servicos, clientes) exigem a palavra magica no parametro magic_word (env GTA7_MAGIC_WORD). Persistencia: os dados vivem em data/supermarket.json; toda escrita grava de volta (arquivo local em dev; commit no repo via GITHUB_TOKEN na Vercel).",
+  "notes": "Os dados (produtos, estoque, clientes, compras) sao acessados EXCLUSIVAMENTE pelas MCP tools em /api/mcp — nao ha endpoint REST nem listagem na pagina. Respostas das tools sempre em linguagem natural e amigavel, sem jargao. Comprar (register_purchase) baixa o estoque e NAO exige palavra magica. As escritas de admin (produtos, servicos, clientes) exigem a palavra magica no parametro magic_word (env GTA7_MAGIC_WORD). Persistencia em data/supermarket.json (arquivo local em dev; commit no repo via GITHUB_TOKEN na Vercel).",
   "mcp": {
     "transport": "streamable-http",
     "endpoint": "/api/mcp",
@@ -37,8 +37,8 @@
       { "name": "delete_customer", "description": "Remove um cliente do cadastro (exige magic_word)." }
     ]
   },
-  "http": {
-    "products": "GET /api/products?query=&department=&max_price=&in_stock_only=",
+  "endpoints": {
+    "mcp": "POST /api/mcp",
     "manifest": "GET /api/manifest"
   }
 }

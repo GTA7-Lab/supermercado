@@ -24,25 +24,27 @@ npm run dev       # http://localhost:3000
 npm run build     # build de produção
 ```
 
-## Endpoints
+## Acesso aos dados
+
+**Exclusivamente pelas MCP tools em `POST /api/mcp`.** Não há endpoint REST de dados e a
+página `/` não lista nada — é só uma landing que aponta para o MCP.
 
 | Rota | Descrição |
 |------|-----------|
-| `/` | Página de consulta (busca por texto, departamento, preço, estoque) |
-| `GET /api/products?query=&department=&max_price=&in_stock_only=` | Consulta REST de produtos |
-| `GET /api/manifest` | Manifesto da entidade para o Core Orchestrator |
-| `POST /api/mcp` | Servidor MCP remoto (Streamable HTTP) |
+| `POST /api/mcp` | Servidor MCP (Streamable HTTP) — **único acesso aos dados** |
+| `GET /api/manifest` | Manifesto: nome da entidade + lista de tools (sem dados), para o Core |
+| `/` | Landing estática (sem dados) |
 
 ## MCP tools
 
-| Tool | Parâmetros | Retorno |
-|------|-----------|---------|
-| `search_products` | `query?`, `department?`, `max_price?`, `in_stock_only?` | `{ count, filters, products[], items[] }` |
-| `check_stock` | `product` (id, nome ou código de barras) | `{ found, product?, message }` |
-| `get_store_info` | — | dados da loja + `service_spaces` |
+Leitura: `search_products`, `check_stock`, `get_store_info`, `list_service_spaces`,
+`list_customers`, `get_customer`, `list_purchases`.
+Compra (baixa estoque, sem palavra mágica): `register_purchase`.
+Escrita de admin (exige `magic_word`): `create/update/delete_product`,
+`create/update/delete_service_space`, `create/update/delete_customer`.
 
 `search_products` casa `query` por token (aceita a frase inteira vinda do Core) e devolve
-`items` com o alias `preco` — os campos que o Core Orchestrator reconhece.
+o texto amigável + `structuredContent` com `items`/`preco` para o Core Orchestrator.
 
 ### Testar o MCP local
 

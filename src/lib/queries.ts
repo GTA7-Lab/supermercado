@@ -1,6 +1,5 @@
 // Funcoes de consulta reutilizadas pela pagina web, pela API REST e pelas MCP tools.
 import type { Product } from "./data";
-import { store } from "./repository";
 import { allProducts } from "./catalog";
 
 function norm(s: string): string {
@@ -90,8 +89,4 @@ export function checkStock(product: string): CheckStockResult {
         ? `${found.name}: ${found.stock} em estoque (corredor ${found.aisle}).`
         : `${found.name}: sem estoque no momento.`,
   };
-}
-
-export function listDepartments(): string[] {
-  return store.facilities.departments;
 }
