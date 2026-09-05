@@ -1,5 +1,6 @@
 // Funcoes de consulta reutilizadas pela pagina web, pela API REST e pelas MCP tools.
-import { products, store, type Product } from "./data";
+import { store, type Product } from "./data";
+import { allProducts } from "./catalog";
 
 function norm(s: string): string {
   return s
@@ -29,7 +30,7 @@ export function searchProducts(input: SearchProductsInput = {}): SearchProductsR
     : [];
   const dep = input.department ? norm(input.department) : null;
 
-  const list = products.filter((p) => {
+  const list = allProducts().filter((p) => {
     const haystack = norm(`${p.name} ${p.brand} ${p.category} ${p.department}`);
     if (tokens.length && !tokens.some((t) => haystack.includes(t))) return false;
     if (dep && norm(p.department) !== dep) return false;
@@ -62,9 +63,10 @@ export function checkStock(product: string): CheckStockResult {
     return { found: false, message: "Informe o id, o nome ou o codigo de barras do produto." };
   }
 
+  const catalog = allProducts();
   const found =
-    products.find((p) => norm(p.id) === key || p.barcode === product) ??
-    products.find((p) => norm(p.name).includes(key));
+    catalog.find((p) => norm(p.id) === key || p.barcode === product) ??
+    catalog.find((p) => norm(p.name).includes(key));
 
   if (!found) {
     return { found: false, message: `Nenhum produto encontrado para "${product}".` };

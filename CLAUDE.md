@@ -27,29 +27,31 @@ purchases: [{ id, customer_id, datetime, checkout, payment_method,
 
 ## MCP tools — `src/app/api/mcp/route.ts` (endpoint `/api/mcp`, streamable-http)
 
-**Regra:** toda resposta MCP é texto em linguagem natural, amigável, sem jargão/JSON cru.
+**Regras:**
+1. Toda resposta MCP é texto em linguagem natural, amigável, sem jargão/JSON cru.
+2. Toda **escrita** (produtos, serviços, clientes) exige a **palavra mágica** no
+   parâmetro `magic_word`. Fonte: env `GTA7_MAGIC_WORD` (padrão `ericgomes`).
+   `magic_word` é `optional` no schema (pra recusa sair amigável, não erro Zod).
 
-| tool | params | o que faz |
-|------|--------|-----------|
-| `search_products` | `query?`, `department?`, `max_price?`, `in_stock_only?` | lista produtos em texto; também devolve `structuredContent {resumo,quantidade,items[]}` p/ o Core |
-| `check_stock` | `product` (id \| nome \| barcode) | disponibilidade, preço e corredor de 1 produto |
-| `get_store_info` | — | endereço, horário, estrutura e espaços de serviço |
-| `list_customers` | `query?` | lista clientes cadastrados (filtro opcional) |
-| `get_customer` | `customer` (id \| nome \| fidelidade) | dados de 1 cliente |
-| `create_customer` | `name`, `loyalty_id?`, `points?` | cadastra cliente |
-| `update_customer` | `customer`, `name?`, `loyalty_id?`, `points?` | atualiza cliente |
-| `delete_customer` | `customer` | remove cliente |
+Leitura: `search_products`, `check_stock`, `get_store_info`, `list_service_spaces`,
+`list_customers`, `get_customer`.
+Escrita (com `magic_word`): `create_product`, `update_product`, `delete_product`,
+`create_service_space`, `update_service_space`, `delete_service_space`,
+`create_customer`, `update_customer`, `delete_customer`.
 
 - `search_products`: `query` casa por token (aceita a frase inteira do Core); os dados
   estruturados vão em `structuredContent` (via `outputSchema` no `registerTool`) com `items`+`preco`.
-- CRUD de clientes: estado em memória (`src/lib/customers.ts`), **não persiste na Vercel**
-  (disco somente leitura) — a resposta avisa isso.
+- Estado mutável em `src/lib/catalog.ts` (produtos + espaços de serviço) e
+  `src/lib/customers.ts` (clientes), semeado do JSON. **Não persiste na Vercel**
+  (disco somente leitura) — cada resposta de escrita avisa isso.
+- `src/lib/queries.ts` lê produtos de `catalog.allProducts()` (para os criados via MCP aparecerem nas buscas).
 
 ## Arquivos principais
 
 - `data/supermarket.json` — dados da entidade
 - `src/lib/data.ts` — carrega o JSON + tipos
 - `src/lib/queries.ts` — `searchProducts`, `checkStock`, `listDepartments` (lógica compartilhada)
+- `src/lib/catalog.ts` — CRUD em memória de produtos e espaços de serviço (seed do JSON)
 - `src/lib/customers.ts` — CRUD de clientes em memória (seed do JSON)
 - `src/app/page.tsx` — página de consulta (form + tabela)
 - `src/app/api/products/route.ts` — REST: `GET /api/products?query=&department=&max_price=&in_stock_only=`
