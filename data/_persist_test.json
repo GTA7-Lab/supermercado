@@ -1,0 +1,553 @@
+{
+  "store": {
+    "id": "supermarket",
+    "name": "Supermercado GTA7 Central",
+    "description": "Supermercado da GTA7 Lab: alimentos, bebidas, limpeza e bazar, com padaria, acougue e peixaria.",
+    "address": "Av. Central, 1000 - Centro, GTA7 Lab",
+    "hours": "Seg-Sab 07:00-22:00, Dom 08:00-20:00",
+    "facilities": {
+      "parking_spaces": 120,
+      "restrooms": true,
+      "shopping_carts": 90,
+      "checkouts": 12,
+      "self_checkouts": 4,
+      "departments": [
+        "hortifruti",
+        "mercearia",
+        "bebidas",
+        "limpeza",
+        "padaria",
+        "acougue",
+        "peixaria",
+        "bazar"
+      ]
+    },
+    "service_spaces": [
+      {
+        "id": "svc-1",
+        "status": "ocupado",
+        "tenant": "Cafeteria do Ze",
+        "type": "cafeteria"
+      },
+      {
+        "id": "svc-2",
+        "status": "ocupado",
+        "tenant": "Loterica Sorte Grande",
+        "type": "loterica"
+      },
+      {
+        "id": "svc-3",
+        "status": "disponivel",
+        "tenant": null,
+        "type": null
+      },
+      {
+        "id": "svc-4",
+        "status": "disponivel",
+        "tenant": null,
+        "type": null
+      }
+    ]
+  },
+  "products": [
+    {
+      "id": "p-001",
+      "name": "Arroz branco 5kg",
+      "category": "graos",
+      "department": "mercearia",
+      "brand": "Tio Joao",
+      "price": 27.9,
+      "unit": "pacote",
+      "barcode": "7891000000011",
+      "stock": 123,
+      "aisle": "12",
+      "perishable": false
+    },
+    {
+      "id": "p-002",
+      "name": "Feijao carioca 1kg",
+      "category": "graos",
+      "department": "mercearia",
+      "brand": "Camil",
+      "price": 8.49,
+      "unit": "pacote",
+      "barcode": "7891000000028",
+      "stock": 60,
+      "aisle": "12",
+      "perishable": false
+    },
+    {
+      "id": "p-003",
+      "name": "Cafe torrado e moido 500g",
+      "category": "mercearia",
+      "department": "mercearia",
+      "brand": "Pilao",
+      "price": 15.9,
+      "unit": "pacote",
+      "barcode": "7891000000035",
+      "stock": 35,
+      "aisle": "10",
+      "perishable": false
+    },
+    {
+      "id": "p-004",
+      "name": "Acucar refinado 1kg",
+      "category": "mercearia",
+      "department": "mercearia",
+      "brand": "Uniao",
+      "price": 4.99,
+      "unit": "pacote",
+      "barcode": "7891000000042",
+      "stock": 80,
+      "aisle": "10",
+      "perishable": false
+    },
+    {
+      "id": "p-005",
+      "name": "Oleo de soja 900ml",
+      "category": "mercearia",
+      "department": "mercearia",
+      "brand": "Liza",
+      "price": 7.29,
+      "unit": "garrafa",
+      "barcode": "7891000000059",
+      "stock": 54,
+      "aisle": "09",
+      "perishable": false
+    },
+    {
+      "id": "p-006",
+      "name": "Leite integral 1L",
+      "category": "laticinios",
+      "department": "mercearia",
+      "brand": "Italac",
+      "price": 4.79,
+      "unit": "caixa",
+      "barcode": "7891000000066",
+      "stock": 120,
+      "aisle": "08",
+      "perishable": true
+    },
+    {
+      "id": "p-007",
+      "name": "Banana prata kg",
+      "category": "frutas",
+      "department": "hortifruti",
+      "brand": "Hortifruti GTA7",
+      "price": 5.99,
+      "unit": "kg",
+      "barcode": "2000000000017",
+      "stock": 40,
+      "aisle": "01",
+      "perishable": true
+    },
+    {
+      "id": "p-008",
+      "name": "Tomate kg",
+      "category": "legumes",
+      "department": "hortifruti",
+      "brand": "Hortifruti GTA7",
+      "price": 7.49,
+      "unit": "kg",
+      "barcode": "2000000000024",
+      "stock": 30,
+      "aisle": "01",
+      "perishable": true
+    },
+    {
+      "id": "p-009",
+      "name": "Alface crespa un",
+      "category": "verduras",
+      "department": "hortifruti",
+      "brand": "Hortifruti GTA7",
+      "price": 3.49,
+      "unit": "unidade",
+      "barcode": "2000000000031",
+      "stock": 25,
+      "aisle": "02",
+      "perishable": true
+    },
+    {
+      "id": "p-010",
+      "name": "Agua mineral sem gas 1,5L",
+      "category": "aguas",
+      "department": "bebidas",
+      "brand": "Cristal",
+      "price": 2.99,
+      "unit": "garrafa",
+      "barcode": "7891000000073",
+      "stock": 200,
+      "aisle": "05",
+      "perishable": false
+    },
+    {
+      "id": "p-011",
+      "name": "Refrigerante cola 2L",
+      "category": "refrigerantes",
+      "department": "bebidas",
+      "brand": "Coca-Cola",
+      "price": 9.99,
+      "unit": "garrafa",
+      "barcode": "7891000000080",
+      "stock": 90,
+      "aisle": "05",
+      "perishable": false
+    },
+    {
+      "id": "p-012",
+      "name": "Suco de laranja 1L",
+      "category": "sucos",
+      "department": "bebidas",
+      "brand": "Do Bem",
+      "price": 12.9,
+      "unit": "caixa",
+      "barcode": "7891000000097",
+      "stock": 45,
+      "aisle": "06",
+      "perishable": true
+    },
+    {
+      "id": "p-013",
+      "name": "Cerveja pilsen lata 350ml",
+      "category": "alcoolicos",
+      "department": "bebidas",
+      "brand": "Heineken",
+      "price": 4.49,
+      "unit": "lata",
+      "barcode": "7891000000103",
+      "stock": 300,
+      "aisle": "07",
+      "perishable": false
+    },
+    {
+      "id": "p-014",
+      "name": "Detergente liquido 500ml",
+      "category": "limpeza",
+      "department": "limpeza",
+      "brand": "Ype",
+      "price": 2.79,
+      "unit": "frasco",
+      "barcode": "7891000000110",
+      "stock": 150,
+      "aisle": "14",
+      "perishable": false
+    },
+    {
+      "id": "p-015",
+      "name": "Sabao em po 1kg",
+      "category": "limpeza",
+      "department": "limpeza",
+      "brand": "Omo",
+      "price": 14.9,
+      "unit": "caixa",
+      "barcode": "7891000000127",
+      "stock": 70,
+      "aisle": "14",
+      "perishable": false
+    },
+    {
+      "id": "p-016",
+      "name": "Papel higienico 12 rolos",
+      "category": "higiene",
+      "department": "limpeza",
+      "brand": "Neve",
+      "price": 21.9,
+      "unit": "pacote",
+      "barcode": "7891000000134",
+      "stock": 60,
+      "aisle": "15",
+      "perishable": false
+    },
+    {
+      "id": "p-017",
+      "name": "Pao frances kg",
+      "category": "paes",
+      "department": "padaria",
+      "brand": "Padaria GTA7",
+      "price": 16.9,
+      "unit": "kg",
+      "barcode": "2000000000048",
+      "stock": 20,
+      "aisle": "padaria",
+      "perishable": true
+    },
+    {
+      "id": "p-018",
+      "name": "Bolo de fuba fatia",
+      "category": "confeitaria",
+      "department": "padaria",
+      "brand": "Padaria GTA7",
+      "price": 6.5,
+      "unit": "unidade",
+      "barcode": "2000000000055",
+      "stock": 15,
+      "aisle": "padaria",
+      "perishable": true
+    },
+    {
+      "id": "p-019",
+      "name": "Picanha bovina kg",
+      "category": "carnes",
+      "department": "acougue",
+      "brand": "Acougue GTA7",
+      "price": 79.9,
+      "unit": "kg",
+      "barcode": "2000000000062",
+      "stock": 18,
+      "aisle": "acougue",
+      "perishable": true
+    },
+    {
+      "id": "p-020",
+      "name": "File de frango kg",
+      "category": "carnes",
+      "department": "acougue",
+      "brand": "Acougue GTA7",
+      "price": 19.9,
+      "unit": "kg",
+      "barcode": "2000000000079",
+      "stock": 35,
+      "aisle": "acougue",
+      "perishable": true
+    },
+    {
+      "id": "p-021",
+      "name": "Salmao fresco kg",
+      "category": "pescados",
+      "department": "peixaria",
+      "brand": "Peixaria GTA7",
+      "price": 89.9,
+      "unit": "kg",
+      "barcode": "2000000000086",
+      "stock": 12,
+      "aisle": "peixaria",
+      "perishable": true
+    },
+    {
+      "id": "p-022",
+      "name": "Tilapia filé kg",
+      "category": "pescados",
+      "department": "peixaria",
+      "brand": "Peixaria GTA7",
+      "price": 39.9,
+      "unit": "kg",
+      "barcode": "2000000000093",
+      "stock": 16,
+      "aisle": "peixaria",
+      "perishable": true
+    },
+    {
+      "id": "p-023",
+      "name": "Camiseta basica algodao",
+      "category": "vestuario",
+      "department": "bazar",
+      "brand": "BasicWear",
+      "price": 29.9,
+      "unit": "unidade",
+      "barcode": "7891000000141",
+      "stock": 40,
+      "aisle": "20",
+      "perishable": false
+    },
+    {
+      "id": "p-024",
+      "name": "Chinelo de dedo",
+      "category": "calcados",
+      "department": "bazar",
+      "brand": "Rider",
+      "price": 24.9,
+      "unit": "par",
+      "barcode": "7891000000158",
+      "stock": 55,
+      "aisle": "20",
+      "perishable": false
+    },
+    {
+      "id": "p-025",
+      "name": "Ventilador de mesa 30cm",
+      "category": "eletrodomesticos",
+      "department": "bazar",
+      "brand": "Mondial",
+      "price": 129.9,
+      "unit": "unidade",
+      "barcode": "7891000000165",
+      "stock": 8,
+      "aisle": "22",
+      "perishable": false
+    }
+  ],
+  "customers": [
+    {
+      "id": "c-001",
+      "name": "Ana Souza",
+      "loyalty_id": "GTA7-1001",
+      "since": "2024-03-11",
+      "points": 320
+    },
+    {
+      "id": "c-002",
+      "name": "Bruno Lima",
+      "loyalty_id": "GTA7-1002",
+      "since": "2024-06-02",
+      "points": 145
+    },
+    {
+      "id": "c-003",
+      "name": "Carla Mendes",
+      "loyalty_id": "GTA7-1003",
+      "since": "2025-01-20",
+      "points": 890
+    },
+    {
+      "id": "c-004",
+      "name": "Diego Alves",
+      "loyalty_id": "GTA7-1004",
+      "since": "2025-08-14",
+      "points": 60
+    },
+    {
+      "id": "c-005",
+      "name": "Restaurante Sabor da Cidade",
+      "loyalty_id": "GTA7-2001",
+      "since": "2024-02-01",
+      "points": 5400
+    }
+  ],
+  "purchases": [
+    {
+      "id": "order-1001",
+      "customer_id": "c-001",
+      "datetime": "2026-09-01T14:32:00Z",
+      "checkout": 3,
+      "payment_method": "credito",
+      "items": [
+        {
+          "product_id": "p-001",
+          "qty": 1,
+          "unit_price": 27.9
+        },
+        {
+          "product_id": "p-006",
+          "qty": 6,
+          "unit_price": 4.79
+        },
+        {
+          "product_id": "p-011",
+          "qty": 2,
+          "unit_price": 9.99
+        }
+      ],
+      "total": 76.44
+    },
+    {
+      "id": "order-1002",
+      "customer_id": "c-002",
+      "datetime": "2026-09-02T10:05:00Z",
+      "checkout": 7,
+      "payment_method": "pix",
+      "items": [
+        {
+          "product_id": "p-017",
+          "qty": 0.5,
+          "unit_price": 16.9
+        },
+        {
+          "product_id": "p-020",
+          "qty": 1.2,
+          "unit_price": 19.9
+        }
+      ],
+      "total": 32.33
+    },
+    {
+      "id": "order-1003",
+      "customer_id": "c-003",
+      "datetime": "2026-09-02T19:40:00Z",
+      "checkout": 1,
+      "payment_method": "debito",
+      "items": [
+        {
+          "product_id": "p-013",
+          "qty": 12,
+          "unit_price": 4.49
+        },
+        {
+          "product_id": "p-010",
+          "qty": 6,
+          "unit_price": 2.99
+        }
+      ],
+      "total": 71.82
+    },
+    {
+      "id": "order-1004",
+      "customer_id": "c-005",
+      "datetime": "2026-09-03T08:15:00Z",
+      "checkout": 12,
+      "payment_method": "faturado",
+      "items": [
+        {
+          "product_id": "p-021",
+          "qty": 5,
+          "unit_price": 89.9
+        },
+        {
+          "product_id": "p-022",
+          "qty": 8,
+          "unit_price": 39.9
+        },
+        {
+          "product_id": "p-008",
+          "qty": 10,
+          "unit_price": 7.49
+        }
+      ],
+      "total": 843.6
+    },
+    {
+      "id": "order-1005",
+      "customer_id": "c-004",
+      "datetime": "2026-09-04T17:22:00Z",
+      "checkout": 5,
+      "payment_method": "credito",
+      "items": [
+        {
+          "product_id": "p-023",
+          "qty": 2,
+          "unit_price": 29.9
+        },
+        {
+          "product_id": "p-024",
+          "qty": 1,
+          "unit_price": 24.9
+        }
+      ],
+      "total": 84.7
+    },
+    {
+      "id": "order-1006",
+      "customer_id": "c-001",
+      "datetime": "2026-09-05T09:10:00Z",
+      "checkout": 2,
+      "payment_method": "pix",
+      "items": [
+        {
+          "product_id": "p-002",
+          "qty": 3,
+          "unit_price": 8.49
+        },
+        {
+          "product_id": "p-004",
+          "qty": 2,
+          "unit_price": 4.99
+        },
+        {
+          "product_id": "p-014",
+          "qty": 4,
+          "unit_price": 2.79
+        }
+      ],
+      "total": 46.61
+    }
+  ]
+}
