@@ -374,6 +374,19 @@
       "stock": 8,
       "aisle": "22",
       "perishable": false
+    },
+    {
+      "id": "p-026",
+      "name": "Catuaba Selvagem",
+      "category": "bebidas",
+      "department": "bebidas",
+      "brand": "Marca propria",
+      "price": 37.9,
+      "unit": "unidade",
+      "barcode": "2000000000026",
+      "stock": 12,
+      "aisle": "bebidas",
+      "perishable": false
     }
   ],
   "customers": [
