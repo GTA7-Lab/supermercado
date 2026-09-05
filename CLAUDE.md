@@ -34,8 +34,10 @@ purchases: [{ id, customer_id, datetime, checkout, payment_method,
    `magic_word` é `optional` no schema (pra recusa sair amigável, não erro Zod).
 
 Leitura: `search_products`, `check_stock`, `get_store_info`, `list_service_spaces`,
-`list_customers`, `get_customer`.
-Escrita (com `magic_word`): `create_product`, `update_product`, `delete_product`,
+`list_customers`, `get_customer`, `list_purchases`.
+Compra (SEM `magic_word`, mas baixa estoque): `register_purchase` — valida estoque de
+forma atômica, grava o pedido e soma pontos de fidelidade (1 ponto/R$) se `customer` for informado.
+Escrita de admin (com `magic_word`): `create_product`, `update_product`, `delete_product`,
 `create_service_space`, `update_service_space`, `delete_service_space`,
 `create_customer`, `update_customer`, `delete_customer`.
 
@@ -52,7 +54,8 @@ Escrita (com `magic_word`): `create_product`, `update_product`, `delete_product`
 - `src/lib/data.ts` — carrega o JSON + tipos
 - `src/lib/queries.ts` — `searchProducts`, `checkStock`, `listDepartments` (lógica compartilhada)
 - `src/lib/catalog.ts` — CRUD em memória de produtos e espaços de serviço (seed do JSON)
-- `src/lib/customers.ts` — CRUD de clientes em memória (seed do JSON)
+- `src/lib/customers.ts` — CRUD de clientes em memória + `addPoints` (seed do JSON)
+- `src/lib/sales.ts` — `registerPurchase` (baixa estoque + grava pedido + pontos), `listPurchases`
 - `src/app/page.tsx` — página de consulta (form + tabela)
 - `src/app/api/products/route.ts` — REST: `GET /api/products?query=&department=&max_price=&in_stock_only=`
 - `src/app/api/mcp/route.ts` — servidor MCP remoto

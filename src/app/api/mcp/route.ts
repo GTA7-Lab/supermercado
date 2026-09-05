@@ -3,9 +3,11 @@
 //
 // Regras desta entidade:
 //  1. As respostas das tools sao sempre em linguagem natural, amigavel, sem jargao.
-//  2. Toda escrita (produtos, servicos e clientes) exige a "palavra magica"
-//     (env GTA7_MAGIC_WORD; padrao "ericgomes"). Sem ela, a operacao e recusada.
-//  3. So `search_products` tambem devolve structuredContent para o Core Orchestrator.
+//  2. Toda ESCRITA DE ADMIN (cadastro de produtos, servicos e clientes) exige a
+//     "palavra magica" (env GTA7_MAGIC_WORD; padrao "ericgomes").
+//  3. Comprar (`register_purchase`) e acao de cliente: NAO exige a palavra magica,
+//     mas baixa o estoque dos produtos vendidos.
+//  4. So `search_products` tambem devolve structuredContent para o Core Orchestrator.
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { checkStock, searchProducts } from "@/lib/queries";
@@ -20,6 +22,7 @@ import {
   updateProduct,
   updateServiceSpace,
 } from "@/lib/catalog";
+import { listPurchases, registerPurchase } from "@/lib/sales";
 import {
   createCustomer,
   deleteCustomer,
@@ -152,6 +155,66 @@ const handler = createMcpHandler((server) => {
       return text(
         `${p.name} esta disponivel: ${p.stock} em estoque, no corredor ${p.aisle}, a ${brl(p.price)} por ${p.unit}.`,
       );
+    },
+  );
+
+  // ============================================================ COMPRAS
+  server.registerTool(
+    "register_purchase",
+    {
+      title: "Registrar compra",
+      description:
+        "Registra a compra de um ou mais produtos: baixa o estoque de cada um e guarda o pedido. Opcionalmente atribui pontos de fidelidade a um cliente. Nao exige palavra magica.",
+      inputSchema: {
+        items: z
+          .array(
+            z.object({
+              product: z.string().describe("Nome, codigo (p-001) ou codigo de barras do produto."),
+              quantity: z.number().positive().describe("Quantidade comprada."),
+            }),
+          )
+          .min(1)
+          .describe("Itens da compra."),
+        customer: z.string().optional().describe("Cliente (nome, codigo ou cartao fidelidade) para somar pontos."),
+        payment_method: z.string().optional().describe("Forma de pagamento (ex.: pix, credito, debito, dinheiro)."),
+      },
+    },
+    async ({ items, customer, payment_method }) => {
+      const r = registerPurchase(items, { customer, payment_method });
+      if (!r.ok) return text(r.error);
+
+      const linhas = r.sold.map(
+        (i) => `- ${i.qty}x ${i.name} a ${brl(i.unit_price)} (estoque agora: ${i.new_stock})`,
+      );
+      let msg = `Compra registrada (pedido ${r.order.id}):\n${linhas.join("\n")}\nTotal: ${brl(r.total)}, pago com ${r.order.payment_method}.`;
+      if (r.customer) {
+        msg += `\n${r.customer.name} ganhou ${r.points_earned} ponto(s) e agora tem ${r.customer.points}.`;
+      } else if (customer) {
+        msg += `\n(Nao achei o cliente "${customer}", entao os pontos nao foram atribuidos.)`;
+      }
+      return text(`${msg} ${NAO_PERSISTE}`);
+    },
+  );
+
+  server.registerTool(
+    "list_purchases",
+    {
+      title: "Listar compras",
+      description: "Mostra as compras registradas (as mais recentes primeiro).",
+      inputSchema: {
+        limit: z.number().int().positive().max(50).optional().describe("Quantas mostrar (padrao 10)."),
+      },
+    },
+    async ({ limit }) => {
+      const all = listPurchases().sort((a, b) => b.datetime.localeCompare(a.datetime));
+      const take = all.slice(0, limit ?? 10);
+      if (take.length === 0) return text("Ainda nao ha compras registradas.");
+      const linhas = take.map((o) => {
+        const qtdItens = o.items.reduce((s, it) => s + it.qty, 0);
+        const quem = o.customer_id ? `cliente ${o.customer_id}` : "sem cliente";
+        return `- ${o.id}: ${qtdItens} item(ns), ${brl(o.total)}, ${o.payment_method}, ${quem} (${o.datetime.slice(0, 10)})`;
+      });
+      return text(`${take.length} compra(s) (de ${all.length}):\n${linhas.join("\n")}`);
     },
   );
 

@@ -8,11 +8,12 @@
     "consultar_estoque",
     "consultar_loja",
     "consultar_espacos_servico",
+    "registrar_compras",
     "gerenciar_produtos",
     "gerenciar_espacos_servico",
     "gerenciar_clientes"
   ],
-  "notes": "Respostas das tools MCP sempre em linguagem natural e amigavel, sem jargao. Toda escrita (produtos, servicos, clientes) exige a palavra magica no parametro magic_word (env GTA7_MAGIC_WORD).",
+  "notes": "Respostas das tools MCP sempre em linguagem natural e amigavel, sem jargao. Comprar (register_purchase) baixa o estoque e NAO exige palavra magica. As escritas de admin (cadastro de produtos, servicos, clientes) exigem a palavra magica no parametro magic_word (env GTA7_MAGIC_WORD).",
   "mcp": {
     "transport": "streamable-http",
     "endpoint": "/api/mcp",
@@ -21,6 +22,8 @@
       { "name": "check_stock", "description": "Diz se um produto esta disponivel, o preco e o corredor." },
       { "name": "get_store_info", "description": "Endereco, horario, estrutura e espacos de servico da loja." },
       { "name": "list_service_spaces", "description": "Lista os espacos de servico rapido e se estao livres ou ocupados." },
+      { "name": "register_purchase", "description": "Registra uma compra: baixa o estoque dos produtos e guarda o pedido (sem palavra magica)." },
+      { "name": "list_purchases", "description": "Lista as compras registradas, mais recentes primeiro." },
       { "name": "list_customers", "description": "Lista os clientes cadastrados, com filtro opcional." },
       { "name": "get_customer", "description": "Mostra um cliente pelo nome, codigo ou cartao fidelidade." },
       { "name": "create_product", "description": "Cadastra um produto (exige magic_word)." },

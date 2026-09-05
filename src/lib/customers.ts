@@ -71,3 +71,11 @@ export function deleteCustomer(idOrName: string): Customer | undefined {
   const [removed] = list.splice(i, 1);
   return removed;
 }
+
+/** Soma pontos de fidelidade (delta pode ser negativo). Devolve o cliente atualizado. */
+export function addPoints(idOrName: string, delta: number): Customer | undefined {
+  const i = indexOfCustomer(idOrName);
+  if (i === -1) return undefined;
+  list[i].points = Math.max(0, Math.round(list[i].points + delta));
+  return { ...list[i] };
+}
