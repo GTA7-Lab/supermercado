@@ -7,24 +7,22 @@
     "consultar_produtos",
     "consultar_estoque",
     "consultar_loja",
-    "consultar_espacos_servico"
+    "consultar_espacos_servico",
+    "gerenciar_clientes"
   ],
+  "notes": "As respostas das tools MCP sao sempre em linguagem natural e amigavel, sem jargao tecnico.",
   "mcp": {
     "transport": "streamable-http",
     "endpoint": "/api/mcp",
     "tools": [
-      {
-        "name": "search_products",
-        "description": "Busca produtos por texto, departamento, preco maximo e disponibilidade em estoque."
-      },
-      {
-        "name": "check_stock",
-        "description": "Consulta estoque, preco e corredor de um produto pelo id, nome ou codigo de barras."
-      },
-      {
-        "name": "get_store_info",
-        "description": "Retorna dados da loja (endereco, horario, caixas, carrinhos) e espacos de servico disponiveis."
-      }
+      { "name": "search_products", "description": "Busca produtos por texto, departamento, preco maximo e disponibilidade." },
+      { "name": "check_stock", "description": "Diz se um produto esta disponivel, o preco e o corredor." },
+      { "name": "get_store_info", "description": "Endereco, horario, estrutura e espacos de servico da loja." },
+      { "name": "list_customers", "description": "Lista os clientes cadastrados, com filtro opcional." },
+      { "name": "get_customer", "description": "Mostra um cliente pelo nome, codigo ou cartao fidelidade." },
+      { "name": "create_customer", "description": "Cadastra um novo cliente (so o nome e obrigatorio)." },
+      { "name": "update_customer", "description": "Atualiza nome, cartao fidelidade ou pontos de um cliente." },
+      { "name": "delete_customer", "description": "Remove um cliente do cadastro." }
     ]
   },
   "http": {
